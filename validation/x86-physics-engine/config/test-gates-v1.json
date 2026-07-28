@@ -1,0 +1,25 @@
+{
+  "schema": "dial-physics-gates/1",
+  "G1": {"property_cases": 10000, "trajectory_cases": 200},
+  "G2": {"short_cases": 100000, "physics_steps": 10000000},
+  "G3": {"cases": 1000000, "physics_steps": 100000000},
+  "G4": {
+    "equivalent_24h_base_steps": 8640000,
+    "equivalent_7d_base_steps": 60480000,
+    "wall_clock_hours": 24,
+    "weekly_substeps": 1000000000,
+    "angle_crossings": 10000000,
+    "state_cycles": 1000000
+  },
+  "performance": {
+    "warmup_steps": 100000,
+    "measured_steps": 10000000,
+    "runs": 5,
+    "mean_ms": 0.10,
+    "p99_ms": 0.20,
+    "p999_ms": 0.30,
+    "isolated_max_ms": 1.00,
+    "minimum_realtime_multiple": 100.0
+  }
+}
+

@@ -1,0 +1,13 @@
+/build/
+/build-*/
+/out/
+/reports/*
+!/reports/.gitkeep
+
+*.profraw
+*.profdata
+*.gcda
+*.gcno
+*.gcov
+*.log
+

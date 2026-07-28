@@ -1,0 +1,99 @@
+{
+  "schema": "dial-physics-g0/1",
+  "physics_base_hz": 100,
+  "base_dt_seconds": 0.01,
+  "base_quarters": 4,
+  "gravity_mps2": 9.80665,
+  "support_envelope": {
+    "mass_kg": [0.00005, 0.002],
+    "visual_length_m": [0.003, 0.022],
+    "effective_acceleration_mps2": 156.9064,
+    "angular_velocity_rad_s": 35.744,
+    "angular_acceleration_rad_s2": 2000.0,
+    "relative_angular_speed_rad_s": 80.0,
+    "max_contacts": 8,
+    "max_events": 16
+  },
+  "substep_policy": {
+    "allowed": [1, 2, 4],
+    "accuracy_limit": 0.1,
+    "engineering_limit": 0.25,
+    "frozen_angle_rad": 0.01
+  },
+  "hands": [
+    {
+      "name": "hour",
+      "kind": "rigid",
+      "mass_kg": 0.0004,
+      "visual_length_m": 0.010,
+      "center_of_mass_at_zero_m": [0.0, -0.0045, 0.0],
+      "inertia_pivot_kg_m2": 4.0e-8,
+      "natural_damping_ratio": 0.12
+    },
+    {
+      "name": "minute-flex",
+      "kind": "flexible2d",
+      "mass_kg": 0.0003,
+      "visual_length_m": 0.014,
+      "center_of_mass_at_zero_m": [0.0, -0.0065, 0.0],
+      "inertia_pivot_kg_m2": 4.0e-8,
+      "natural_damping_ratio": 0.12,
+      "flex": {
+        "m1_kg": 0.00018,
+        "m2_kg": 0.00012,
+        "d1_m": 0.007,
+        "l1_m": 0.0035,
+        "l2_m": 0.0035,
+        "j1_kg_m2": 6.0e-8,
+        "j2_kg_m2": 2.5e-8,
+        "bend_stiffness_nm_rad": 3.0e-7,
+        "bend_damping_nm_s_rad": 5.0e-9,
+        "release_angle_rad": 0.35
+      }
+    },
+    {
+      "name": "second",
+      "kind": "rigid",
+      "mass_kg": 0.00015,
+      "visual_length_m": 0.016,
+      "center_of_mass_at_zero_m": [0.0, -0.0075, 0.0],
+      "inertia_pivot_kg_m2": 3.0e-8,
+      "natural_damping_ratio": 0.10
+    }
+  ],
+  "control": {
+    "time_natural_frequency_rad_s": 8.0,
+    "time_damping_ratio": 0.85,
+    "touch_natural_frequency_rad_s": 20.0,
+    "touch_damping_ratio": 0.75,
+    "idle_timeout_s": 5.0,
+    "settle_angle_rad": 0.01,
+    "settle_velocity_rad_s": 0.05,
+    "settle_duration_s": 0.25,
+    "hybrid_capture_angle_rad": 0.08,
+    "animation_duration_s": 0.25
+  },
+  "fault_policy": {
+    "invalid_configuration": "reject",
+    "nonfinite_input": "reject_interval_and_degrade",
+    "duplicate_or_backwards_time": "reject_without_consuming",
+    "declared_gap": "fixed_step_zero_excitation_degrade",
+    "renormalizable_quaternion": "normalize_and_flag",
+    "invalid_quaternion": "reject_and_degrade",
+    "substep_policy_exceeded": "reject_configuration",
+    "speed_or_energy_limit": "correct_authoritative_state_and_ledger"
+  },
+  "tolerances": {
+    "a0_float32_rtol": 0.00003,
+    "a1_float32_rtol": 0.0001,
+    "a0_float64_rtol": 1e-10,
+    "a1_float64_rtol": 1e-9,
+    "trajectory_angle_rms_rad": 0.01,
+    "trajectory_angle_max_rad": 0.03,
+    "trajectory_velocity_rms_rad_s": 0.05,
+    "trajectory_velocity_max_rad_s": 0.15,
+    "energy_work_rms": 0.005,
+    "energy_work_p999": 0.02,
+    "energy_work_hard": 0.05
+  }
+}

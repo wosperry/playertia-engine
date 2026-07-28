@@ -1,0 +1,106 @@
+# CMake and Ninja build trees
+/build/
+/build-*/
+/out/
+/cmake-build-*/
+**/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+compile_commands.json
+build.ninja
+.ninja_deps
+.ninja_log
+_deps/
+Testing/
+
+# Compiled binaries and libraries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.elf
+*.bin
+*.map
+
+# Test, benchmark, fuzz, and coverage output
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+*.coverage
+*.log
+crash-*
+leak-*
+timeout-*
+oom-*
+validation/**/reports/*
+!validation/**/reports/.gitkeep
+
+# ESP-IDF and PlatformIO generated files
+.pio/
+managed_components/
+sdkconfig
+sdkconfig.old
+
+# Android and Gradle generated files
+.gradle/
+local.properties
+*.iml
+*.apk
+*.aab
+captures/
+
+# Apple/Xcode generated files
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xcarchive
+*.ipa
+.swiftpm/
+.build/
+
+# Signing keys, credentials, and local environment
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.mobileprovision
+
+# HarmonyOS generated files
+.hvigor/
+oh_modules/
+*.hap
+*.app
+
+# Editors and operating systems
+.agents/
+.codex/
+.idea/
+.vscode/
+.clangd/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+.cache/
