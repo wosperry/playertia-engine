@@ -128,6 +128,132 @@ TEST(Scenarios, AnimationSynchronizesVelocityAuthorityOnCompletion) {
   EXPECT_TRUE(engine.snapshot().hands[0].stateValid);
 }
 
+TEST(Scenarios, ClockReturnCanDiscardPhysicalEntryVelocity) {
+  EngineConfig config = makeDefaultConfig();
+  config.returnStrategy = ReturnStrategy::Animation;
+  config.animationDurationSec = 0.10F;
+  config.animationPreserveEntryVelocity = false;
+  for (HandDefinition& hand : config.hands) {
+    hand.kind = HandKind::Rigid;
+  }
+
+  PhysicalDialEngine moving;
+  ASSERT_TRUE(moving.configure(config));
+  moving.reset({-1.0, -1.0, -1.0}, {25.0F, 25.0F, 25.0F}, {});
+  StepInput input = test::makeInput(0.7F, 0.1F);
+  input.events[0] = {EventType::BeginReturn, 0, 0.0F, 0U};
+  input.eventCount = 1;
+  ASSERT_TRUE(moving.step(test::makeBase(0U, {}), input));
+  const double moving_angle_after_entry =
+      moving.snapshot().hands[0].angleUnwrappedRad;
+
+  input.eventCount = 0;
+  ASSERT_TRUE(moving.step(test::makeBase(10'000U, {}), input));
+  const double moving_angle =
+      moving.snapshot().hands[0].angleUnwrappedRad;
+
+  PhysicalDialEngine stationary;
+  ASSERT_TRUE(stationary.configure(config));
+  stationary.reset({-1.0, -1.0, -1.0}, {}, {});
+  input.eventCount = 1;
+  ASSERT_TRUE(stationary.step(test::makeBase(0U, {}), input));
+  EXPECT_NEAR(moving_angle_after_entry,
+              stationary.snapshot().hands[0].angleUnwrappedRad,
+              1.0e-6);
+  input.eventCount = 0;
+  ASSERT_TRUE(stationary.step(test::makeBase(10'000U, {}), input));
+  EXPECT_NEAR(moving_angle,
+              stationary.snapshot().hands[0].angleUnwrappedRad,
+              1.0e-6);
+}
+
+TEST(Scenarios, ClockReturnCompletesInsideShortBoundedWindow) {
+  PhysicalDialEngine engine;
+  EngineConfig config = makeDefaultConfig();
+  config.returnStrategy = ReturnStrategy::Animation;
+  config.animationDurationSec = 0.28F;
+  config.animationPreserveEntryVelocity = false;
+  for (HandDefinition& hand : config.hands) {
+    hand.kind = HandKind::Rigid;
+  }
+  ASSERT_TRUE(engine.configure(config));
+  engine.reset({-2.5, 1.7, -0.9}, {30.0F, -20.0F, 12.0F}, {});
+
+  StepInput input = test::makeInput(0.4F, 0.01F);
+  input.events[0] = {EventType::BeginReturn, 0, 0.0F, 0U};
+  input.eventCount = 1;
+  for (std::uint64_t step = 0; step < 20U; ++step) {
+    input.eventCount = step == 0U ? 1U : 0U;
+    ASSERT_TRUE(
+        engine.step(test::makeBase(step * 10'000U, {}), input));
+  }
+  EXPECT_EQ(engine.snapshot().globalMode, GlobalMode::AutoReturn);
+
+  for (std::uint64_t step = 20U; step < 30U; ++step) {
+    input.eventCount = 0;
+    ASSERT_TRUE(
+        engine.step(test::makeBase(step * 10'000U, {}), input));
+  }
+  EXPECT_EQ(engine.snapshot().globalMode, GlobalMode::TimeTracking);
+  for (const HandSnapshot& hand : engine.snapshot().hands) {
+    EXPECT_TRUE(hand.settled);
+    EXPECT_EQ(hand.mode, HandMode::TimeControlled);
+  }
+}
+
+TEST(Scenarios, RepeatedClockReturnsAlwaysRestartAnimation) {
+  PhysicalDialEngine engine;
+  EngineConfig config = makeDefaultConfig();
+  config.returnStrategy = ReturnStrategy::Animation;
+  config.animationDurationSec = 0.10F;
+  config.animationPreserveEntryVelocity = false;
+  for (HandDefinition& hand : config.hands) {
+    hand.kind = HandKind::Rigid;
+  }
+  ASSERT_TRUE(engine.configure(config));
+  engine.reset({}, {}, {});
+
+  StepInput input = test::makeInput(0.0F, 0.01F);
+  std::uint64_t step_index = 0U;
+  for (int cycle = 0; cycle < 3; ++cycle) {
+    input.events[0] =
+        {EventType::EnterPhysics, 0, 0.0F, step_index * 10'000U};
+    input.events[1] =
+        {EventType::ExternalImpulse, 0, 1.0e-6F,
+         step_index * 10'000U};
+    input.eventCount = 2;
+    ASSERT_TRUE(engine.step(
+        test::makeBase(step_index++ * 10'000U, {}), input));
+    input.eventCount = 0;
+    for (int free_step = 0; free_step < 4; ++free_step) {
+      ASSERT_TRUE(engine.step(
+          test::makeBase(step_index++ * 10'000U, {}), input));
+    }
+    ASSERT_GT(std::abs(
+                  engine.snapshot().hands[0].angleUnwrappedRad),
+              0.1);
+
+    input.events[0] =
+        {EventType::BeginReturn, 0, 0.0F, step_index * 10'000U};
+    input.eventCount = 1;
+    ASSERT_TRUE(engine.step(
+        test::makeBase(step_index++ * 10'000U, {}), input));
+    input.eventCount = 0;
+    EXPECT_EQ(engine.snapshot().globalMode, GlobalMode::AutoReturn);
+    EXPECT_GT(std::abs(
+                  engine.snapshot().hands[0].angleUnwrappedRad),
+              0.05);
+
+    for (int return_step = 0; return_step < 12; ++return_step) {
+      ASSERT_TRUE(engine.step(
+          test::makeBase(step_index++ * 10'000U, {}), input));
+    }
+    EXPECT_EQ(engine.snapshot().globalMode, GlobalMode::TimeTracking);
+    EXPECT_NEAR(engine.snapshot().hands[0].angleUnwrappedRad,
+                0.0, 0.02);
+  }
+}
+
 TEST(Scenarios, SameInputIsBitDeterministic) {
   PhysicalDialEngine first;
   PhysicalDialEngine second;

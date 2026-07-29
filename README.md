@@ -52,6 +52,7 @@ The first target scenes are:
 │   ├── free-balls/                # Planned free-marble scene
 │   └── ball-maze/                 # Planned miniature maze
 ├── platforms/                     # ESP32-S3 and other device adapters
+├── third_party/                   # Pinned, licensed upstream reference snapshots
 ├── examples/                      # Cross-platform examples using only the public SDK
 └── validation/
     ├── requirements/              # Independent validation requirements
@@ -68,13 +69,15 @@ Implemented:
 - touch, TIME_REF, and mechanical, animated, and hybrid return;
 - generic contact constraints and energy, impulse, torque, and safety ledgers;
 - a separately buildable, versioned C ABI;
+- a fixed-capacity ESP32-S3 application lifecycle and switching shell;
+- a physical clock application flashed to the ESP32-S3 target;
+- PCF85063A time, QMI8658 inertial input, CST820 touch, and an LVGL vector dial;
 - an independent high-precision x86 oracle and G0–G5 validation system.
 
 Not yet implemented:
 
-- ESP32-S3 firmware and the QMI8658 driver;
-- AMOLED rendering and material presentation;
-- touch hit testing and gesture recognition;
+- final on-device axis, touch-coordinate, and material-feel calibration for the
+  ESP32-S3 physical clock;
 - free-marble and maze geometry;
 - audio, haptics, and platform lifecycle adapters;
 - native Android, Apple, and HarmonyOS packages.
@@ -87,6 +90,7 @@ Not yet implemented:
 - [Scenes](scenes/README.md)
 - [Physical watch](scenes/physical-watch/README.md)
 - [Device adapters](platforms/README.md)
+- [ESP32-S3 platform](platforms/esp32-s3/README.md)
 - [Public examples](examples/README.md)
 - [Validation](validation/README.md)
 

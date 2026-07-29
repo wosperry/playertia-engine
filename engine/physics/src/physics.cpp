@@ -510,6 +510,7 @@ void PhysicalDialEngine::applyEvents(const StepInput& input,
       case EventType::EnterPhysics:
         globalMode_ = GlobalMode::PhysicsPlay;
         for (RuntimeHand& state : states_) {
+          state.animation = {};
           state.mode = HandMode::ImuFree;
           state.settled = false;
         }
@@ -517,6 +518,7 @@ void PhysicalDialEngine::applyEvents(const StepInput& input,
       case EventType::BeginReturn:
         globalMode_ = GlobalMode::AutoReturn;
         for (RuntimeHand& state : states_) {
+          state.animation = {};
           state.mode = HandMode::Returning;
           state.settled = false;
         }
@@ -524,6 +526,7 @@ void PhysicalDialEngine::applyEvents(const StepInput& input,
       case EventType::ForceTimeTracking:
         globalMode_ = GlobalMode::TimeTracking;
         for (RuntimeHand& state : states_) {
+          state.animation = {};
           state.mode = HandMode::TimeControlled;
         }
         break;
@@ -531,6 +534,7 @@ void PhysicalDialEngine::applyEvents(const StepInput& input,
         globalMode_ = GlobalMode::PhysicsPlay;
         snapshot_.lastError = ErrorCode::None;
         for (RuntimeHand& state : states_) {
+          state.animation = {};
           state.flags |= SafetyRecovered;
           state.mode = HandMode::ImuFree;
         }
@@ -953,10 +957,12 @@ void PhysicalDialEngine::applyAnimation(std::size_t index,
   if (!animation.active) {
     animation.active = true;
     animation.startAngle = currentAngle;
-    animation.startVelocity = currentVelocity;
+    animation.startVelocity =
+        config_.animationPreserveEntryVelocity ? currentVelocity : 0.0F;
     animation.startUs = nowUs;
     animation.durationUs = static_cast<std::uint64_t>(
         config_.animationDurationSec * 1.0e6F);
+    state.settled = false;
   }
   const float duration =
       std::max(static_cast<float>(animation.durationUs) * 1.0e-6F,
@@ -1189,6 +1195,7 @@ bool PhysicalDialEngine::step(const BaseInterval& base,
       RuntimeHand& state = states_[i];
       const bool wantsAnimation =
           globalMode_ == GlobalMode::AutoReturn &&
+          !state.settled &&
           (config_.returnStrategy == ReturnStrategy::Animation ||
            (config_.returnStrategy == ReturnStrategy::Hybrid &&
             std::abs(shortestAngle(

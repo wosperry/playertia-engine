@@ -49,6 +49,7 @@
 │   ├── free-balls/                # 规划：三四颗自由钢珠壁纸
 │   └── ball-maze/                 # 规划：微型钢珠迷宫
 ├── platforms/                     # ESP32-S3 等具体设备适配
+├── third_party/                   # 固定版本且保留许可证的上游参考快照
 ├── examples/                      # 只使用公开 SDK 的跨平台示例
 └── validation/
     ├── requirements/              # 独立验证要求
@@ -65,13 +66,14 @@
 - 触摸、TIME_REF、机械/动画/混合回归；
 - 通用接触约束、能量/冲量/安全账本；
 - 可独立构建的版本化 C ABI；
+- 固定容量的 ESP32-S3 应用生命周期与按键切换壳层；
+- 已刷入实机的 ESP32-S3 物理时钟应用；
+- PCF85063A 时间、QMI8658 姿态/惯性、CST820 触摸和 LVGL 矢量表盘适配；
 - x86 独立高精度 Oracle 和 G0～G5 验证体系。
 
 尚未实现：
 
-- ESP32-S3 固件和 QMI8658 驱动；
-- AMOLED 指针与材质渲染；
-- 实际触摸命中和手势；
+- ESP32-S3 物理时钟的最终轴向、触摸坐标和材质手感验收；
 - 自由钢珠与迷宫几何；
 - 音频、振动和平台生命周期适配。
 - Android、Apple 和 HarmonyOS 原生安装包。
@@ -84,6 +86,7 @@
 - [场景目录](scenes/README.md)
 - [物理指针手表](scenes/physical-watch/README.md)
 - [平台适配边界](platforms/README.md)
+- [ESP32-S3 平台](platforms/esp32-s3/README.md)
 - [公开示例](examples/README.md)
 - [验证体系](validation/README.md)
 

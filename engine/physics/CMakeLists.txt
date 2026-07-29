@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.24)
 
+if(COMMAND idf_component_register)
+  idf_component_register(
+    SRCS "src/physics.cpp"
+    INCLUDE_DIRS "include")
+  target_compile_features(${COMPONENT_LIB} PUBLIC cxx_std_20)
+  target_compile_definitions(${COMPONENT_LIB} PRIVATE DIAL_MUTATION_ID=0)
+  return()
+endif()
+
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   project(playertia_dial_physics_engine VERSION 1.0.0 LANGUAGES CXX)
 endif()

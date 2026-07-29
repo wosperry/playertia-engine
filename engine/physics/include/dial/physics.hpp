@@ -159,6 +159,7 @@ struct EngineConfig {
   float settleDurationSec{0.25F};
   float hybridCaptureAngleRad{0.08F};
   float animationDurationSec{0.25F};
+  bool animationPreserveEntryVelocity{true};
   float maxEffectiveAccelerationMps2{156.9064F};
   float maxBodyAngularVelocityRadSec{35.744F};
 };

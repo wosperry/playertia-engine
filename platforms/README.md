@@ -17,3 +17,9 @@
 - x86 桌面调试工具。
 
 平台层不得复制物理方程，也不得直接覆盖场景的权威物理状态。
+
+ESP32-S3 当前资料：
+
+- [平台目录](esp32-s3/README.md)
+- [硬件实测与官方参数](esp32-s3/docs/hardware-parameters.zh-CN.md)
+- [官方开发与首次上板指导](esp32-s3/docs/development-guide.zh-CN.md)
